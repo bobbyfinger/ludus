@@ -10,6 +10,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci
-      - run: tsc --noEmit
-      - run: node --test test/
+      - run: npm install
+      - run: npm test

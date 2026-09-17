@@ -17,8 +17,9 @@ d'abord (règles ponytail).
   `./data:/app/data`, port 3000 exposé. Pas de db, pas de nginx — le serveur
   arrive en P3 ; `CMD node --version` est un placeholder honnête marqué
   `ponytail:`.
-- **CI GitHub Actions** (T3) : push + PR → `npm ci`, `tsc --noEmit`,
-  `node --test test/`. Rien d'autre (pas de lint, pas de matrix).
+- **CI GitHub Actions** (T3) : push + PR → `npm install`, `npm test` (le
+  script npm test porte la garde bootstrap et npm run met node_modules/.bin
+  sur le PATH). Rien d'autre (pas de lint, pas de matrix).
 - **Tag `v0.1.0`** annoté, créé localement dans le worktree T3, poussé par le
   planner après merge.
 
@@ -31,8 +32,8 @@ d'abord (règles ponytail).
 - **P0-T2 (génération)** : même seed ⇒ gladiateur identique (snapshot) ;
   stats bornées, budget de points équilibré.
 - **P0-T3 (docker/CI)** : `docker compose config -q` valide ; le workflow
-  ci.yml contient exactement npm ci / tsc / node --test ; tag v0.1.0 local
-  présent.
+  ci.yml contient exactement npm install / npm test ; package-lock.json
+  committé ; .dockerignore présent ; tag v0.1.0 local présent.
 
 ## Incident worktree bootstrap
 
@@ -42,3 +43,21 @@ d'un worktree dédié. Conséquence : les worktrees T1–T3 ont été créés
 après coup depuis ce checkout racine, sans divergence de contenu (branche
 `swarm/P0-T0` fusionnée en amont). Leçon notée pour les vagues suivantes :
 vérifier `cordis.patch.yml` (worktrees activés) **avant** le premier spawn.
+
+## Post-mortem rejet revue 1 (T3, tentative 1)
+
+Défauts relevés par le reviewer et corrigés en tentative 2 :
+
+1. **package-lock.json absent** → `npm ci` rouge garanti en CI (il exige un
+   lockfile). Corrigé : lockfile généré (`npm install`) et committé.
+2. **`tsc --noEmit` brut en step** : les steps GitHub Actions n'incluent pas
+   `node_modules/.bin` sur le PATH. Corrigé : steps remplacés par
+   `npm install` + `npm test` (npm run met le bin dir sur le PATH).
+3. **`node --test test/` bypassait la garde bootstrap** du script npm test
+   (repo sans sources TS à ce stade). Corrigé : la CI appelle `npm test`,
+   qui porte la garde.
+4. **`COPY . .` embarquait node_modules** (pas de .dockerignore). Corrigé :
+   .dockerignore (node_modules, .swarm, data, .git, dist).
+
+Leçon : la CI doit appeler les mêmes commandes que le développeur
+(`npm test`), jamais des variantes parallèles.
