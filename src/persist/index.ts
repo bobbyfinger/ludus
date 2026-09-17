@@ -9,7 +9,7 @@ export interface SaveFile {
 /** Écriture atomique : tmp puis rename, pour ne jamais corrompre un état existant. */
 export async function saveState(path: string, state: unknown): Promise<void> {
   const file: SaveFile = { schema: 1, savedAt: new Date().toISOString(), state };
-  const tmp = `${path}.tmp`;
+  const tmp = `${path}.tmp`; // ponytail: pas de fsync du tmp ni de lock — acceptable pour un état local mono-processus
   await writeFile(tmp, JSON.stringify(file), "utf8");
   await rename(tmp, path);
 }
