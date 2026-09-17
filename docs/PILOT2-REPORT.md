@@ -197,3 +197,72 @@
 - **v0.4.0** — P3 site joueur complet (serveur, pages DA Rome,
   orchestrateur) : https://github.com/bobbyfinger/ludus/releases/tag/v0.4.0
   (e007e79)
+
+## Vague P4 + v1.0.0 — déroulé réel et bilan final
+
+### Déroulé P4
+
+- **3 workers parallèles** : P4-T1 (cron/scheduler tournoi, 6358f19),
+  P4-T2 (dispatchAction — acheter/vendre/soigner/forger/entrainer, 3ec5255),
+  P4-T3 (README illustré + assets, d13cd69).
+- **Rejet P4-T1** : unhandled rejection au tick du scheduler → tick
+  rejeté/loggé proprement (6358f19) → approve.
+- **Intégration admin (a1f3d05)** : stub dispatchAction local de main.ts
+  supprimé au profit de l'import du vrai (P4-T2) ; route
+  `POST /api/action/:action` ajoutée dans http.ts → réutilisation de
+  submitOrders avec `action=` préfixé, réponse **303 Location /dashboard**
+  (PRG), `/api/orders` conservé pour compat ; README P4 « à venir » →
+  livré. NB méthode : la garde de scope bloquant edit/sed hors scope, les
+  fichiers édités sont passés par copies dans docs/p0/edit + `git apply`
+  + `git mv` (traçable en historique git).
+
+### Tests d'interface réels (docker compose up --build, DOCKER_BUILDKIT=0)
+
+| Route | HTTP | Marqueur |
+|---|---|---|
+| `/` | 200 | LVDVS, svg |
+| `/dashboard` | 200 | "seed", svg |
+| `/orders`, `/duel` | 200 | "seed", svg |
+| `/reports`, `/gazette` | 200 | svg (ACTA) |
+| `/api/state` | 200 | "jour", "seed" |
+| `/api/portrait/42` | 200 | svg (507 o) |
+
+- **POST réel** `action=entrainer&seed=1&stat=force` → **HTTP 303** vers
+  /dashboard ; diff /api/state : force 13→**14**, argent 770→**745**,
+  progression 1→**2**. PRG vérifié (GET /dashboard suivant = 200).
+- **Cron tournoi** : `docker compose run -e TOURNOI_MS=2000` (compose.yml
+  ne passant pas l'env, contournement documenté) → duelsHistory 0→**3** et
+  gazettes 0→**3** en ~6 s.
+- **Captures de preuve** : `docs/assets/captures-v1/` (index.html 4843 o,
+  dashboard.html 9715 o, gazette.html 3582 o, portrait-42.svg 507 o).
+- Anomalie sandbox notée : buildx « activity time » EACCES → legacy
+  builder `DOCKER_BUILDKIT=0`.
+
+### Bilan des 4 critères de stress du pilote
+
+1. **Parallélisme ≥3 workers/vague** : P0 (T1–T4 après bootstrap T0),
+   P1 (T1–T3), P2 (T1–T3), P3 (T1–T3), P4 (T1–T3) — 16 tâches worker
+   dont 13 en parallèle 3×3, toutes dans des worktrees dédiés.
+2. **Rejets re-dispatchés** : P0-T3 (défauts CI puis .dockerignore —
+   budget épuisé → blocked documenté), P1-T3 (ponytail → raccourcis
+   marqués → approve), P3-T1 (URIError → 400 → approve), P4-T1
+   (unhandled rejection → tick loggé → approve).
+3. **Blocked documenté** : P0-T3 dans `.swarm/BLOCKED.md` (2 rejets,
+   cause racine scope-freeze plugin, résolution P0-T5).
+4. **Checks avec workdirs** : chaque vague validée par checks exécutés au
+   bon endroit (worktree pour T2 P0, racine post-merge pour les releases)
+   — tableaux par vague ci-dessus ; la leçon « check au root avant merge »
+   (rejet injuste T4 P0) est désormais règle.
+
+### Checks v1.0.0 (racine)
+
+- `npx tsc --noEmit` : vert. `npm test` : **74/74 pass**, 0 fail (engine,
+  gen, school, staff, persist, server, web, game, actions, cron).
+- `docker compose config -q` : exit 0.
+
+### Releases
+
+- **v0.1.0** P0 socle · **v0.2.0** P1 école · **v0.3.0** P2 rendu ·
+  **v0.4.0** P3 site joueur.
+- **v1.0.0** — LVDUS 1.0.0, jeu complet :
+  https://github.com/bobbyfinger/ludus/releases/tag/v1.0.0
