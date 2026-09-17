@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ludus Sang &amp; Sueur — tableau de bord</title>
+<style>
+:root{--sable:#C2B280;--terracotta:#B3552E;--sang:#7A1F1F;--or:#C9A227;--bronze:#8C6A3F;--encre:#2b1d12;--papyrus:#f3e9d2}
+*{box-sizing:border-box}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;color:var(--encre);
+  background:var(--sable);
+  background-image:radial-gradient(circle at 20% 30%, rgba(255,244,214,.35) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 60%, rgba(122,31,31,.06) 0 3px, transparent 4px),
+    linear-gradient(160deg, #d8c79b, var(--sable) 55%, #b39a68);
+  background-size:37px 37px, 53px 53px, 100% 100%}
+h1,h2,h3{font-variant:small-caps;letter-spacing:.12em;margin:.2em 0}
+h1{font-size:2rem;color:var(--sang)}
+a{color:var(--sang)}
+.frise{height:10px;background:repeating-linear-gradient(90deg,
+  var(--or) 0 12px, var(--terracotta) 12px 24px, var(--sang) 24px 34px, var(--bronze) 34px 46px)}
+.stele{max-width:920px;margin:1.5rem auto;padding:1.5rem 2rem;background:var(--papyrus);
+  border:4px double var(--bronze);box-shadow:0 6px 18px rgba(43,29,18,.35)}
+.cta{display:inline-block;padding:.6rem 1.6rem;background:var(--sang);color:var(--papyrus);
+  font-variant:small-caps;letter-spacing:.15em;text-decoration:none;border:2px solid var(--or)}
+.cta:hover{background:var(--terracotta)}
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+.carte{border:2px solid var(--bronze);background:#faf3e0;padding:.6rem;text-align:center}
+.carte svg{width:100%;max-width:120px;display:block;margin:0 auto}
+.stat{font-size:.85rem;color:var(--bronze)}
+.blesse{color:var(--sang);font-weight:bold}
+.boutons{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.5rem}
+button,input[type=submit]{font-family:inherit;font-variant:small-caps;letter-spacing:.08em;
+  background:var(--bronze);color:var(--papyrus);border:1px solid var(--sang);padding:.25rem .7rem;cursor:pointer}
+button:hover{background:var(--terracotta)}
+form.inline{display:inline}
+select{font-family:inherit}
+.rapport{border-left:4px solid var(--sang);padding:.4rem 1rem;margin:1rem 0;background:#efe2c4}
+.gazette h1{border-bottom:3px double var(--or);padding-bottom:.3rem}
+.gazette li{margin:.3rem 0}
+</style>
+</head>
+<body>
+<div class="frise"></div>
+<main class="stele dashboard">
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SPQR">
+  <text x="60" y="26" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#7A1F1F" letter-spacing="4">SPQR</text>
+  <path d="M8 20 Q28 4 44 18 M8 20 Q28 36 44 22" stroke="#C9A227" fill="none" stroke-width="2"/>
+  <path d="M112 20 Q92 4 76 18 M112 20 Q92 36 76 22" stroke="#C9A227" fill="none" stroke-width="2"/>
+</svg>
+
+<h1>Ludus Sang &amp; Sueur</h1>
+<p><strong>Jour 1</strong> · Caisse : <strong>792 sesterces</strong> · 4 gladiateur(s)</p>
+<div class="boutons" style="justify-content:flex-start">
+  <form class="inline" method="post" action="/api/action/acheter"><button>Acheter un gladiateur</button></form>
+</div>
+<h2>Le roster</h2>
+<div class="roster">
+<div class="carte">
+  <h3>Marcus Galba</h3>
+  <svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="160" fill="#8fa3ad"/><rect x="20" y="130" width="80" height="30" fill="#5d4a3a"/><circle cx="60" cy="66" r="30" fill="#7a4a2b"/><circle cx="50" cy="64" r="3" fill="#1b1b1b"/><circle cx="70" cy="64" r="3" fill="#1b1b1b"/><rect x="52" y="12" width="16" height="34" fill="#8a6a3b"/><path d="M28 38 Q60 16 92 38 L92 58 Q60 46 28 58 Z" fill="#7f8c8d"/><rect x="32" y="50" width="56" height="10" rx="3" fill="#34495e"/></svg>
+  <p class="stat">Germanie · défensif · stats 59</p>
+  <p class="stat">force 13 · agilite 12 · endurance 13 · technique 12 · coupDoeil 9</p>
+  <p class="stat">PV 65  · valeur 51 s.</p>
+  <div class="boutons">
+    <form class="inline" method="post" action="/api/action/vendre"><input type="hidden" name="seed" value="42"><button>Vendre</button></form>
+    <form class="inline" method="post" action="/api/action/soigner"><input type="hidden" name="seed" value="42"><button>Soigner</button></form>
+    <form class="inline" method="post" action="/api/action/entrainer"><input type="hidden" name="seed" value="42"><button>Entraîner</button></form>
+    <form class="inline" method="post" action="/api/action/forger"><input type="hidden" name="seed" value="42"><button>Forger</button></form>
+  </div>
+</div>
+<div class="carte">
+  <h3>Sextus Durus</h3>
+  <svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="160" fill="#d9c48a"/><rect x="20" y="130" width="80" height="30" fill="#5d4a3a"/><circle cx="60" cy="66" r="30" fill="#5a3620"/><circle cx="50" cy="64" r="3" fill="#1b1b1b"/><circle cx="70" cy="64" r="3" fill="#1b1b1b"/><path d="M40 62 l10 6 M44 60 l2 10" stroke="#8a3b3b" stroke-width="1.5"/><path d="M32 44 Q60 24 88 44 L88 36 Q60 20 32 36 Z" fill="#8a6a3b"/><path d="M28 38 Q60 16 92 38 L92 58 Q60 46 28 58 Z" fill="#7f8c8d"/><rect x="32" y="50" width="56" height="10" rx="3" fill="#34495e"/></svg>
+  <p class="stat">Syrie · défensif · stats 62</p>
+  <p class="stat">force 12 · agilite 15 · endurance 14 · technique 12 · coupDoeil 9</p>
+  <p class="stat">PV 70  · valeur 53 s.</p>
+  <div class="boutons">
+    <form class="inline" method="post" action="/api/action/vendre"><input type="hidden" name="seed" value="143"><button>Vendre</button></form>
+    <form class="inline" method="post" action="/api/action/soigner"><input type="hidden" name="seed" value="143"><button>Soigner</button></form>
+    <form class="inline" method="post" action="/api/action/entrainer"><input type="hidden" name="seed" value="143"><button>Entraîner</button></form>
+    <form class="inline" method="post" action="/api/action/forger"><input type="hidden" name="seed" value="143"><button>Forger</button></form>
+  </div>
+</div>
+<div class="carte">
+  <h3>Servius Aemilius</h3>
+  <svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="160" fill="#a8d8ea"/><rect x="20" y="130" width="80" height="30" fill="#5d4a3a"/><circle cx="60" cy="66" r="30" fill="#5a3620"/><path d="M34 70 Q60 108 86 70 Q80 96 60 98 Q40 96 34 70 Z" fill="#8a6a3b"/><circle cx="50" cy="64" r="3" fill="#1b1b1b"/><circle cx="70" cy="64" r="3" fill="#1b1b1b"/><path d="M40 62 l10 6 M44 60 l2 10" stroke="#8a3b3b" stroke-width="1.5"/><path d="M46 76 l10 6 M50 74 l2 10" stroke="#8a3b3b" stroke-width="1.5"/><path d="M52 90 l10 6 M56 88 l2 10" stroke="#8a3b3b" stroke-width="1.5"/><rect x="52" y="12" width="16" height="34" fill="#8a6a3b"/><path d="M30 44 Q60 24 90 44 L90 54 Q60 44 30 54 Z" fill="#9aa5b1"/><circle cx="60" cy="34" r="6" fill="#5a3620"/></svg>
+  <p class="stat">Grèce · prudent · stats 62</p>
+  <p class="stat">force 7 · agilite 20 · endurance 12 · technique 8 · coupDoeil 15</p>
+  <p class="stat">PV 60  · valeur 53 s.</p>
+  <div class="boutons">
+    <form class="inline" method="post" action="/api/action/vendre"><input type="hidden" name="seed" value="244"><button>Vendre</button></form>
+    <form class="inline" method="post" action="/api/action/soigner"><input type="hidden" name="seed" value="244"><button>Soigner</button></form>
+    <form class="inline" method="post" action="/api/action/entrainer"><input type="hidden" name="seed" value="244"><button>Entraîner</button></form>
+    <form class="inline" method="post" action="/api/action/forger"><input type="hidden" name="seed" value="244"><button>Forger</button></form>
+  </div>
+</div>
+<div class="carte">
+  <h3>Decimus Durus</h3>
+  <svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="160" fill="#8fa3ad"/><rect x="20" y="130" width="80" height="30" fill="#5d4a3a"/><circle cx="60" cy="66" r="30" fill="#a9714b"/><path d="M34 70 Q60 108 86 70 Q80 96 60 98 Q40 96 34 70 Z" fill="#b0a08a"/><circle cx="50" cy="64" r="3" fill="#1b1b1b"/><circle cx="70" cy="64" r="3" fill="#1b1b1b"/><path d="M40 62 l10 6 M44 60 l2 10" stroke="#8a3b3b" stroke-width="1.5"/><path d="M32 44 Q60 24 88 44 L88 36 Q60 20 32 36 Z" fill="#b0a08a"/><path d="M28 38 Q60 16 92 38 L92 58 Q60 46 28 58 Z" fill="#7f8c8d"/><rect x="32" y="50" width="56" height="10" rx="3" fill="#34495e"/></svg>
+  <p class="stat">Germanie · défensif · stats 59</p>
+  <p class="stat">force 10 · agilite 13 · endurance 14 · technique 13 · coupDoeil 9</p>
+  <p class="stat">PV 70  · valeur 51 s.</p>
+  <div class="boutons">
+    <form class="inline" method="post" action="/api/action/vendre"><input type="hidden" name="seed" value="345"><button>Vendre</button></form>
+    <form class="inline" method="post" action="/api/action/soigner"><input type="hidden" name="seed" value="345"><button>Soigner</button></form>
+    <form class="inline" method="post" action="/api/action/entrainer"><input type="hidden" name="seed" value="345"><button>Entraîner</button></form>
+    <form class="inline" method="post" action="/api/action/forger"><input type="hidden" name="seed" value="345"><button>Forger</button></form>
+  </div>
+</div>
+</div>
+<p><a href="/orders">Donner les ordres du jour</a> · <a href="/reports">Comptes-rendus</a> · <a href="/gazette">Gazette</a></p>
+
+</main>
+<div class="frise"></div>
+</body>
+</html>
