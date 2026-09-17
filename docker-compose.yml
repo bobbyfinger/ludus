@@ -1,0 +1,8 @@
+# ponytail: service unique — pas de db/nginx tant que le serveur (P3) n'existe pas
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
