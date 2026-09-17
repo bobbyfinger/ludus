@@ -152,3 +152,48 @@
 
 - **v0.3.0** — P2 rendu (portraits SVG, comptes-rendus, gazette) :
   https://github.com/bobbyfinger/ludus/releases/tag/v0.3.0 (780c063)
+
+## Vague P3 — déroulé réel
+
+### Déroulé
+
+- **3 workers parallèles** : P3-T1 (serveur HTTP, 62d59ce), P3-T2 (pages
+  DA Rome, 286d23f), P3-T3 (orchestrateur + main.ts + Docker CMD, afe5665).
+- **Rejet P3-T1** : crash du serveur sur seed portrait mal formé (URIError
+  sur decodeURIComponent) → fix « 400 Bad Request » au lieu du crash
+  (62d59ce) → approve.
+- **Intégration au merge (P0-T5)** : incohérence /duel vs /orders découverte
+  au smoke — les pages lient vers `/orders`, le serveur ne routait que
+  `/duel` → alias une ligne dans http.ts ; imports de main.ts re-pointés
+  vers http.ts/pages.ts (barrels index.ts attendus jamais créés) ;
+  résidu test/game/_tscheck.ts supprimé (edac599, 6bc3099).
+- **Fix types e007e79** (planner) : portrait `(seed: string)` et adaptation
+  `{title, narration}` pour reportsPage — tsc vert, 6/6 tests game.
+- **Découverte pour P4** : crash au démarrage si `data/` absent (ENOENT
+  data/ludus.json.tmp via saveState). Couvert en docker par le volume
+  `./data:/app/data` ; à durcir (mkdir au boot) en P4.
+
+### Smoke test réel (PORT=39017/39021, node --experimental-strip-types)
+
+| Route | HTTP | Marqueur |
+|---|---|---|
+| `/` | 200 | LVDVS présent |
+| `/dashboard`, `/orders`, `/duel`, `/reports`, `/gazette` | 200 | — |
+| `/api/state`, `/api/portrait/42` | 200 | — |
+
+8/8 routes vertes ; re-smoke `/dashboard` 200 après fix types.
+
+### Checks constatés (workdirs)
+
+| Tâche | Check | Workdir | Résultat |
+|---|---|---|---|
+| P0-T5 | `npx tsc --noEmit` | racine | vert |
+| P0-T5 | `npm test` (61 tests : engine+gen+school+staff+persist+server+web+game) | racine | 61/61 pass, 0 fail |
+| P0-T5 | `docker compose config -q` | racine | exit 0 |
+| P0-T5 | tag `v0.4.0` annoté + push | racine | posé sur e007e79, poussé |
+
+### Releases
+
+- **v0.4.0** — P3 site joueur complet (serveur, pages DA Rome,
+  orchestrateur) : https://github.com/bobbyfinger/ludus/releases/tag/v0.4.0
+  (e007e79)
