@@ -20,10 +20,16 @@
   n'était pas un dépôt git (attendu pour un bootstrap, mais à noter : le
   redirection worktree n'a pas joué, les fichiers ont été écrits directement
   à la racine du workspace puis commités via `git init` à la racine).
+- **Raccourci bootstrap** (`ponytail:`) : le script `test` de package.json
+  est gardé par un `find` — tant qu'aucun fichier `.ts` n'existe (TS18003
+  sinon), il affiche « bootstrap: no TS sources yet » et réussit. À retirer
+  dès la première vague qui ajoute du code TS dans `src/` ou `test/`.
 - **Schéma cordis** : le schéma exact du preset a été vérifié dans la doc du
   plugin (`cordis.patch.yml` de cursor-swarm-rules, forme de surcharge par id).
   Le preset suit cette forme documentée plutôt que le YAML logique de repli.
 
 ### URL GitHub
 
-- (à compléter après `gh repo create` — voir le résumé de tâche)
+- **https://github.com/bobbyfinger/ludus** (public, compte `bobbyfinger`,
+  créé au premier essai — pas de repli vers `ludus-pilot2`). Commit initial
+  poussé sur `main` : `7140e3b`.
