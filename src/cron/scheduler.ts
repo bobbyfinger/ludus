@@ -7,6 +7,9 @@ export function startScheduler(
   intervalMs: number,
   tick: () => void | Promise<void>,
 ): { stop: () => void } {
-  const id = setInterval(() => void tick(), intervalMs);
+  const id = setInterval(
+    () => void Promise.resolve(tick()).catch((e) => console.error("tick:", e)),
+    intervalMs,
+  );
   return { stop: () => clearInterval(id) };
 }

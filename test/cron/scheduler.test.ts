@@ -27,3 +27,17 @@ test("startScheduler accepte un tick async", async () => {
   s.stop();
   assert.ok(done >= 1, "au moins un tick async complété");
 });
+
+test("startScheduler avale un tick qui reject (pas d'unhandled rejection)", async () => {
+  const errors: unknown[][] = [];
+  const orig = console.error;
+  console.error = (...a: unknown[]) => errors.push(a);
+  const s = startScheduler(() => {}, () => {}, 5, async () => {
+    throw new Error("boom saveState");
+  });
+  await sleep(20);
+  s.stop();
+  console.error = orig;
+  assert.ok(errors.length >= 1, "erreur loggée");
+  assert.match(String(errors[0]), /boom saveState/);
+});
