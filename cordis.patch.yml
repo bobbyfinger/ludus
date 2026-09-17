@@ -1,0 +1,15 @@
+# cordis.patch.yml — preset swarm cursor-swarm-rules (projet LUDUS)
+# Forme de surcharge documentée par le plugin (patch par id sur l'entrée
+# insérée par le bundle du profil). Référence : cordis.patch.yml du plugin
+# cursor-swarm-rules, exemple (C) « SURCHARGE DU PROFIL ».
+
+- id: cursor-swarm-rules
+  name: cursor-swarm-rules
+  config:
+    stateDir: .swarm
+    reviewCheckCommand: npm test
+    worktrees:
+      enabled: true
+      dir: .swarm/wt
+    maxTaskAttempts: 2
+    wakePlannerOnTaskEnd: true
