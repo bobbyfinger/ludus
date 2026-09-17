@@ -4,9 +4,20 @@ import {
   avanceJournee,
   creerLudus,
   revenusDuel,
+  vendreGladiateur,
   type Ludus,
 } from "../school/index.ts";
-import { generateGladiator } from "../gen/gladiator.ts";
+import {
+  COUT_ENTRAINEMENT,
+  COUT_MEDECIN,
+  ameliorer,
+  coutForge,
+  entrainer,
+  soigner,
+  type StaffGladiator,
+  type StatName,
+} from "../staff/staff.ts";
+import { generateGladiator, type Gladiator } from "../gen/gladiator.ts";
 import { createFighter, mulberry32, resolveDuel, type Style } from "../engine/index.ts";
 import { narrateDuel } from "../report/index.ts";
 import { gazetteDuJour } from "../gazette/index.ts";
@@ -94,6 +105,91 @@ export function traiterOrdres(state: GameState, orders: Record<string, unknown>)
   for (const [seed, style] of Object.entries(orders))
     if (isStyle(style)) valid[seed] = style;
   return { ...state, orders: valid };
+}
+
+// ---- Actions du joueur (vague P4) -----------------------------------------
+
+export type ActionResult = { state: GameState; ok: boolean; reason?: string };
+
+const refus = (state: GameState, reason: string): ActionResult => ({ state, ok: false, reason });
+
+/** Gladiator (gen) vu par le staff : champs d'état absents → défauts. */
+const toStaff = (g: Gladiator): StaffGladiator =>
+  ({ blessureJours: 0, equipement: 0, progression: 0, ...g });
+
+/** Débite `montant` si les fonds suffisent, sinon null (refus). */
+function debit(state: GameState, montant: number): GameState | null {
+  if (state.argent < montant) return null;
+  return { ...state, argent: state.argent - montant };
+}
+
+const STATS: StatName[] = ["force", "agilite", "endurance", "technique", "coupDoeil"];
+
+/**
+ * Dispatch d'une action joueur : 'acheter' | 'vendre' | 'soigner' | 'forger' |
+ * 'entrainer'. Pur et immuable : les refus retournent l'état source tel quel.
+ */
+export function dispatchAction(
+  state: GameState,
+  action: string,
+  payload: { seed?: number | string; stat?: string } = {},
+): ActionResult {
+  const seedNum = payload.seed === undefined
+    ? NaN
+    : typeof payload.seed === "number"
+      ? payload.seed
+      : Number(payload.seed);
+
+  switch (action) {
+    case "acheter": {
+      // seed payload, sinon seed dérivée du jour (déterministe).
+      const seed = Number.isNaN(seedNum)
+        ? (state.jour * 1000 + state.roster.length) >>> 0
+        : seedNum;
+      const res = acheterGladiateur(state, seed);
+      if (res === state) return refus(state, "fonds insuffisants");
+      return { state: res as GameState, ok: true };
+    }
+    case "vendre": {
+      const res = vendreGladiateur(state, seedNum);
+      if (res === state) return refus(state, "seed inconnu");
+      return { state: res as GameState, ok: true };
+    }
+    case "soigner":
+    case "forger":
+    case "entrainer": {
+      const g = state.roster.find((x) => x.seed === seedNum);
+      if (!g) return refus(state, "seed inconnu");
+      const staff = toStaff(g);
+      let cout: number;
+      let apres: StaffGladiator;
+      try {
+        if (action === "soigner") {
+          cout = COUT_MEDECIN;
+          apres = soigner(staff);
+        } else if (action === "forger") {
+          cout = coutForge(staff);
+          apres = ameliorer(staff); // jette au cap 5 → refus propre via catch
+        } else {
+          const stat = payload.stat as StatName;
+          if (!STATS.includes(stat)) return refus(state, "stat invalide");
+          cout = COUT_ENTRAINEMENT;
+          apres = entrainer(staff, stat); // jette aux caps → refus propre via catch
+        }
+      } catch (e) {
+        return refus(state, e instanceof Error ? e.message : String(e));
+      }
+      const paye = debit(state, cout);
+      if (!paye) return refus(state, "fonds insuffisants");
+      return {
+        // apres est `g` enrichi des champs staff : structurellement un Gladiator complet.
+        state: { ...paye, roster: state.roster.map((x) => (x.seed === seedNum ? apres : x)) as Gladiator[] },
+        ok: true,
+      };
+    }
+    default:
+      return refus(state, "action inconnue");
+  }
 }
 
 // Ré-export pratique pour main.ts (portrait par seed depuis l'orchestrateur).
