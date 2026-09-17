@@ -26,10 +26,23 @@ const server = createServer({
   landing: () => landingPage(),
   dashboard: () => dashboardPage(state),
   orders: () => ordersPage(state.roster),
-  reports: () => reportsPage(state.duelsHistory),
+  reports: () =>
+    reportsPage(
+      state.duelsHistory.map((d) => ({
+        title: `Duel — victoire de ${d.winner ?? "personne"} (+${d.bourse})`,
+        narration: d.narration,
+      })),
+    ),
   gazette: () => gazettePage(state.gazettes.at(-1) ?? ""),
   state: () => state,
-  portrait: (seed: number) => portraitSVG(generateGladiator(seed)),
+  portrait: (seed: string) =>
+    portraitSVG(
+      generateGladiator(
+        Number.isFinite(Number(seed))
+          ? Number(seed)
+          : [...seed].reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 1),
+      ),
+    ),
   submitOrders: async (body: unknown) => {
     state = traiterOrdres(state, (body ?? {}) as Record<string, unknown>);
     state = duelDuJour(state, state.jour);
