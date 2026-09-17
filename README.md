@@ -14,7 +14,7 @@ Rome n'a jamais été tendre. Nous non plus.
 | **P1** | École & économie (achats/ventes/salaires), staff, persistance | [v0.2.0](../releases/tag/v0.2.0) |
 | **P2** | Portraits SVG procéduraux, rapports de combat, gazette | [v0.3.0](../releases/tag/v0.3.0) |
 | **P3** | Site complet : serveur HTTP zéro dépendance, pages landing/dashboard/orders/reports/gazette, orchestrateur de jeu | [v0.4.0](../releases/tag/v0.4.0) |
-| **P4** | Tournoi automatique par cron interne, actions directes sur le dashboard (PRG) | à venir |
+| **P4** | Tournoi automatique par cron interne, actions directes sur le dashboard (PRG) | ✅ livré — `startScheduler` (TOURNOI_MS, défaut 6 h) déclenche le duel du jour + sauvegarde ; `POST /api/action/:action` (acheter/vendre/soigner/forger/entrainer) → 303 /dashboard |
 
 ## Captures
 

@@ -9,9 +9,8 @@ import {
   ordersPage,
   reportsPage,
 } from "../web/pages.ts";
-import { duelDuJour, initGame, traiterOrdres, type GameState } from "./index.ts";
+import { duelDuJour, dispatchAction, initGame, traiterOrdres, type GameState } from "./index.ts";
 import { loadState, saveState } from "../persist/index.ts";
-import { acheterGladiateur, vendreGladiateur, type Ludus } from "../school/index.ts";
 import { startScheduler } from "../cron/scheduler.ts";
 import { generateGladiator } from "../gen/gladiator.ts";
 import { portraitSVG } from "../portrait/portrait.ts";
@@ -29,39 +28,6 @@ try {
   state = initGame(1);
 }
 await saveState(DATA, state);
-
-// ponytail: dispatchAction (P4-T2, src/game/index.ts) pas encore exporté dans ce
-// worktree — équivalent local minimal (acheter/vendre via school) ; soigner/forger/
-// entrainer attendent la migration du roster par P4-T2 (champs staff manquants sur
-// Gladiator). À remplacer par l'import dès que P4-T2 atterrit.
-function dispatchAction(
-  state: GameState,
-  action: string,
-  payload: { seed?: string | number; stat?: string },
-): { state: GameState; ok: boolean; reason?: string } {
-  const seed = Number(payload.seed);
-  if (!Number.isFinite(seed)) return { state, ok: false, reason: "seed requis" };
-  // school rend un Ludus (sans les champs de jeu) → on re-grafe l'historique/ordres.
-  const graft = (l: Ludus): GameState => ({
-    ...l,
-    duelsHistory: state.duelsHistory,
-    gazettes: state.gazettes,
-    orders: state.orders,
-  });
-  if (action === "acheter") {
-    const next = acheterGladiateur(state, seed >>> 0);
-    return next === state
-      ? { state, ok: false, reason: "fonds insuffisants" }
-      : { state: graft(next), ok: true };
-  }
-  if (action === "vendre") {
-    const next = vendreGladiateur(state, seed);
-    return next === state
-      ? { state, ok: false, reason: "seed inconnu" }
-      : { state: graft(next), ok: true };
-  }
-  return { state, ok: false, reason: `action '${action}' non supportée (P4-T2)` };
-}
 
 /** Parse un body POST : JSON plat OU form-encoded (URLSearchParams). */
 function parseBody(body: string): Record<string, string> {
@@ -97,9 +63,8 @@ const server = createServer({
           : [...seed].reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 1),
       ),
     ),
-  // ponytail: http.ts ne route que POST /api/orders → les actions passent par un
-  // champ "action" du body ; le chemin POST /api/action/:action et la réponse 303
-  // vers /dashboard (PRG) exigent un changement dans src/server/http.ts (hors scope).
+  // Actions : POST /api/action/:action (http.ts) arrive ici avec action= dans le
+  // body ; dispatchAction (src/game/index.ts) branche les 5 actions métier.
   submitOrders: async (body: string) => {
     const data = parseBody(body);
     if (typeof data.action === "string" && data.action) {

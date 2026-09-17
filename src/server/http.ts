@@ -61,6 +61,15 @@ export function createServer(deps: ServerDeps): Server {
       }
     }
 
+    const action = /^\/api\/action\/([a-z]+)$/.exec(url);
+    if (method === "POST" && action) {
+      const body = await readBody(req);
+      await deps.submitOrders(`action=${action[1]}&${body}`);
+      res.writeHead(303, { location: "/dashboard" });
+      res.end();
+      return;
+    }
+
     if (method === "POST" && url === "/api/orders") {
       deps.submitOrders(await readBody(req));
       res.writeHead(204);
