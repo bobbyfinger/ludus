@@ -93,4 +93,34 @@
 | P0-T4 | diff minimal vérifié au worktree | `.swarm/wt/P0-T4` | validé ; re-review au root post-merge attendue |
 | P0-T5 | `npm test` (tsc + engine + gen) | racine | 16/16 pass, tsc vert |
 | P0-T5 | `docker compose config -q` | racine | exit 0 |
-| P0-T5 | tag `v0.1.0` annoté + push | racine | tip 8106a2e poussé |
+| P0-T5 | tag `v0.1.0` annoté + push | racine | posé sur 2625609 (état final P0), poussé |
+
+## Vague P1 — déroulé réel
+
+### Déroulé
+
+- **3 workers parallèles** : P1-T1 (école/économie, 7a8f3a8), P1-T2 (staff —
+  médecin/forgeron/entraîneur, 75504e2), P1-T3 (persistance JSON atomique,
+  7257ed1 + dfdd2b1), chacun dans son worktree `.swarm/wt/P1-T*`.
+- **Rejet P1-T3 (revue ponytail)** : premier jet marqué over-engineered →
+  re-dispatch dans le budget de tentatives ; seconde soumission marque
+  explicitement les raccourcis (`ponytail:` fsync/lock, commit dfdd2b1) →
+  approve.
+- **Merges par le planner** au fil des approves (P1-T2, P1-T3, P1-T1), puis
+  release P1 par P0-T5 (admin).
+
+### Checks constatés (workdirs)
+
+| Tâche | Check | Workdir | Résultat |
+|---|---|---|---|
+| P0-T5 | `npx tsc --noEmit` | racine | vert |
+| P0-T5 | `npm test` (engine 7, gen 4, school 10, staff 4, persist 5) | racine | 31/31 pass, 0 fail |
+| P0-T5 | `docker compose config -q` | racine | exit 0 |
+| P0-T5 | tag `v0.2.0` annoté + push | racine | posé sur 8dc4e76 (tip P1), poussé |
+
+### Releases
+
+- **v0.1.0** — P0 socle (moteur, gen, docker/CI) :
+  https://github.com/bobbyfinger/ludus/releases/tag/v0.1.0 (2625609)
+- **v0.2.0** — P1 école (économie, staff, persistance) :
+  https://github.com/bobbyfinger/ludus/releases/tag/v0.2.0 (8dc4e76)
