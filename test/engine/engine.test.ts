@@ -8,7 +8,6 @@ import {
   type Order,
   type OrderSource,
   type Style,
-// @ts-expect-error ponytail: extension .ts requise par node strip-types ; tsconfig (hors scope) sans allowImportingTsExtensions
 } from "../../src/engine/index.ts";
 
 const STATS = { force: 12, agilite: 10, endurance: 10, technique: 10, coupdoeil: 10 };
