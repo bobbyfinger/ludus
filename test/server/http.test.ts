@@ -50,6 +50,21 @@ test("routes serve injected content with correct content-types", async () => {
   await new Promise<void>((r) => server.close(() => r()));
 });
 
+test("malformed portrait seed returns 400 without killing the server", async () => {
+  const server = createServer(fakeDeps());
+  await new Promise<void>((r) => server.listen(0, r));
+  const base = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
+
+  const bad = await fetch(base + "/api/portrait/%zz");
+  assert.equal(bad.status, 400);
+
+  const ok = await fetch(base + "/api/portrait/maximus");
+  assert.equal(ok.status, 200);
+  assert.equal(await ok.text(), "<svg>maximus</svg>");
+
+  await new Promise<void>((r) => server.close(() => r()));
+});
+
 test("POST /api/orders forwards raw body and returns 204", async () => {
   const calls: { orders?: string[] } = {};
   const server = createServer(fakeDeps(calls));

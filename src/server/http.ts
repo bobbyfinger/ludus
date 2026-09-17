@@ -47,8 +47,16 @@ export function createServer(deps: ServerDeps): Server {
       }
       const portrait = /^\/api\/portrait\/([^/]+)$/.exec(url);
       if (portrait) {
+        let seed: string;
+        try {
+          seed = decodeURIComponent(portrait[1]!);
+        } catch {
+          res.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+          res.end("Bad seed");
+          return;
+        }
         res.writeHead(200, { "content-type": "image/svg+xml" });
-        res.end(deps.portrait(decodeURIComponent(portrait[1]!)));
+        res.end(deps.portrait(seed));
         return;
       }
     }
