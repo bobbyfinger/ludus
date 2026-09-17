@@ -124,3 +124,31 @@
   https://github.com/bobbyfinger/ludus/releases/tag/v0.1.0 (2625609)
 - **v0.2.0** — P1 école (économie, staff, persistance) :
   https://github.com/bobbyfinger/ludus/releases/tag/v0.2.0 (8dc4e76)
+
+## Vague P2 — déroulé réel
+
+### Déroulé
+
+- **3 workers parallèles** : P2-T1 (portraits SVG procéduraux, 0b3b27f),
+  P2-T2 (comptes-rendus narratifs déterministes, 56fa946), P2-T3 (gazette
+  « Acta Arenae » markdown, d16f1d9), worktrees `.swarm/wt/P2-*`.
+- **Approbations** avec traces dans les workdirs respectifs (checks
+  node:test par module, cf. tableau ci-dessous) ; merges par P0-T5 (admin)
+  : 780c063 = tip après les trois merges ort propres, sans conflit.
+- **Diversité des portraits** (preuve de non-collision du générateur) :
+  hashes `portraitHash` distincts pour des seeds distincts —
+  `vjtck4`, `e9eok`, `8mgumh` observés sur trois gladiateurs seedés.
+
+### Checks constatés (workdirs)
+
+| Tâche | Check | Workdir | Résultat |
+|---|---|---|---|
+| P0-T5 | `npx tsc --noEmit` | racine | vert |
+| P0-T5 | `npm test` (31 P1 + portrait 5 + report 4 + gazette 4) | racine | 44/44 pass, 0 fail |
+| P0-T5 | `docker compose config -q` | racine | exit 0 |
+| P0-T5 | tag `v0.3.0` annoté + push | racine | posé sur 780c063 (tip P2), poussé |
+
+### Releases
+
+- **v0.3.0** — P2 rendu (portraits SVG, comptes-rendus, gazette) :
+  https://github.com/bobbyfinger/ludus/releases/tag/v0.3.0 (780c063)
