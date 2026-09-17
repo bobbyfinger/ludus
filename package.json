@@ -5,7 +5,7 @@
   "description": "LUDUS — résurrection de Sang & Sueur : école de gladiateurs PBEM moderne.",
   "type": "module",
   "scripts": {
-    "test": "test -n \"$(find src test -name '*.ts' 2>/dev/null)\" && (tsc --noEmit && node --test test/) || echo 'bootstrap: no TS sources yet'"
+    "test": "test -n \"$(find src test -name '*.ts' 2>/dev/null)\" && (tsc --noEmit && node --test) || echo 'bootstrap: no TS sources yet'"
   },
   "devDependencies": {
     "@types/node": "^22",
