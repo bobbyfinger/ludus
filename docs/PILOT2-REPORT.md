@@ -91,5 +91,6 @@
 | P0-T2 | `node --test test/gen/*.test.ts` | `.swarm/wt/P0-T2` | 4/4 pass |
 | P0-T3 | contenu revu (docker/CI/lockfile) | — | approved puis blocked (scope-freeze), mergé par T5 |
 | P0-T4 | diff minimal vérifié au worktree | `.swarm/wt/P0-T4` | validé ; re-review au root post-merge attendue |
-| P0-T5 | `npm test` (engine + gen) | racine | voir merge admin |
-| P0-T5 | `docker compose config -q` | racine | exit 0 attendu |
+| P0-T5 | `npm test` (tsc + engine + gen) | racine | 16/16 pass, tsc vert |
+| P0-T5 | `docker compose config -q` | racine | exit 0 |
+| P0-T5 | tag `v0.1.0` annoté + push | racine | tip 8106a2e poussé |
