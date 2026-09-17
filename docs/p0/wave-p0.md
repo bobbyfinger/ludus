@@ -56,7 +56,10 @@ Défauts relevés par le reviewer et corrigés en tentative 2 :
 3. **`node --test test/` bypassait la garde bootstrap** du script npm test
    (repo sans sources TS à ce stade). Corrigé : la CI appelle `npm test`,
    qui porte la garde.
-4. **`COPY . .` embarquait node_modules** (pas de .dockerignore). Corrigé :
+4. **`COPY . .` embarquait node_modules** (pas de .dockerignore). La note de
+   T3 affirmait à tort que .dockerignore avait été créé — faux : le scope
+   freezé de T3 ne couvrait pas `.dockerignore` (incident plugin
+   scope-freeze). Résolu par P0-T5 à l'issue des merges :
    .dockerignore (node_modules, .swarm, data, .git, dist).
 
 Leçon : la CI doit appeler les mêmes commandes que le développeur
