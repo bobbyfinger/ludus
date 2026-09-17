@@ -31,7 +31,7 @@ export function createServer(deps: ServerDeps): Server {
       const htmlRoutes: Record<string, () => string> = {
         "/": deps.landing,
         "/dashboard": deps.dashboard,
-        "/duel": deps.orders,
+        "/duel": deps.orders, "/orders": deps.orders,
         "/reports": deps.reports,
         "/gazette": deps.gazette,
       };

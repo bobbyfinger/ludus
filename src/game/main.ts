@@ -1,12 +1,12 @@
 // Point d'entrée : charge/crée l'état, branche le serveur HTTP, écoute sur PORT.
-import { createServer } from "../server/index.ts";
+import { createServer } from "../server/http.ts";
 import {
   dashboardPage,
   gazettePage,
   landingPage,
   ordersPage,
   reportsPage,
-} from "../web/index.ts";
+} from "../web/pages.ts";
 import { duelDuJour, initGame, traiterOrdres, type GameState } from "./index.ts";
 import { loadState, saveState } from "../persist/index.ts";
 import { generateGladiator } from "../gen/gladiator.ts";
